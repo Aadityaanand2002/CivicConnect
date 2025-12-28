@@ -1,27 +1,23 @@
 const express = require("express");
+const router = express.Router();
 const Complaint = require("../models/Complaint");
 const auth = require("../middleware/auth");
-const admin = require("../middleware/admin");
 
-const router = express.Router();
-
-/* GET ALL COMPLAINTS */
-router.get("/complaints", auth, admin, async (req, res) => {
+// Get all complaints (ADMIN)
+router.get("/complaints", auth, async (req, res) => {
   const complaints = await Complaint.find().populate("user", "name email");
   res.json(complaints);
 });
 
-/* UPDATE STATUS */
-router.put("/complaints/:id", auth, admin, async (req, res) => {
+// Update status (ADMIN)
+router.put("/complaints/:id", auth, async (req, res) => {
   const { status } = req.body;
-
-  const complaint = await Complaint.findByIdAndUpdate(
+  const updated = await Complaint.findByIdAndUpdate(
     req.params.id,
     { status },
     { new: true }
   );
-
-  res.json(complaint);
+  res.json(updated);
 });
 
 module.exports = router;
